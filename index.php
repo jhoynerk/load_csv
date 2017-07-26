@@ -13,10 +13,10 @@ class LoadCSV{
   public $validate_rows = [];
   public $error_rows = [];
   public $csv = [];
-  public $type = true;
+  public $type = null;
   public $titles = ['nombre', 'apellido', 'genero', 'acompañantes', 'email', 'telefono', 'país', 'ciudad', 'direccion', 'codigoPostal', 'Complemento', 'SubsActualizaciones', 'SubsNewsletter'];
 
-  function __construct( $path, $type = true , $titles = null, $delimiter = null){
+  function __construct( $path, $type , $titles = null, $delimiter = null){
     if ( !empty($path) ) {
       $this->path = $path;
     }
@@ -27,11 +27,15 @@ class LoadCSV{
       $this->delimiter = $delimiter;
     }
 
+    if ( !empty($type) ) {
+      $this->type = $type;
+    }
+
     $this->total_columns = count($this->titles);
   }
 
   function load_data(){
-    if($this->type){
+    if($this->type == true){
       $this->load_csv();
     }else{
       $this->load_text();
@@ -51,7 +55,7 @@ class LoadCSV{
 
   function load_text(){
     foreach(preg_split("/((\r?\n)|(\r\n?))/", $this->path) as $line){
-      var_dump($line);
+      $this->comparative_line($line);
     }
   }
 
@@ -75,7 +79,7 @@ class LoadCSV{
 
 
 // cuando se carga desde un archivo .csv
-$csv = new LoadCSV('ejemplo.csv');
+$csv = new LoadCSV('ejemplo.csv', true);
 
 print_r($csv->load_data());
 
@@ -96,11 +100,11 @@ Jhoynerk;Caraballo;male;3;jhoynerk@whooohq.com;5427282533;Argentina
 ";
 
 
-$csv = new LoadCSV('ejemplo.csv');
-$rows_to_save = $csv->load_data();
+$csv_text = new LoadCSV($text, false);
+$rows_to_save = $csv_text->load_data();
 print_r($rows_to_save);
 
 echo "<BR>";
 echo "<BR>";
 
-print_r($csv->error_rows);
+print_r($csv_text->error_rows);
